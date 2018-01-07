@@ -24,20 +24,22 @@ public class Controller{
                     dbNav.printTable(table);
                     break;
                 case 2:
+                    //Neuer Datensatz
                     int vertrags_nr = scanner.nextInt();
                     int vertragsdauer = scanner.nextInt();
                     String erstellt_von = scanner.next();
                     dbNav.createSet(table,vertrags_nr,vertragsdauer,erstellt_von);
                     break;
                 case 3:
-                    //Neuer Datensatz
+                    //Loeschen Datensatz
                     String key = scanner.next();
-                    dbNav.deleteSet("'"+key+"'",table,primaryKey);
+                    dbNav.deleteSet(table,primaryKey,"'"+key+"'");
                     break;
                 case 4:
                     //Navigieren
                     break;
                 case 5:
+                    //Rollback
                     dbNav.rollback();
                     default:
                     break;
@@ -46,7 +48,7 @@ public class Controller{
     }//END RUN()
 
     private void printInfo() {
-        System.out.println("Willkommen in der Matrix \n" +
+        System.out.println(
                 "Was willst du tun? \n" +
                 "(1) Tabelle Ausgabe \n" +
                 "(2) Eingabe neuer Datensaetze \n" +

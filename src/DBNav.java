@@ -1,3 +1,5 @@
+import org.postgresql.util.PSQLException;
+
 import java.sql.*;
 
 /**
@@ -184,7 +186,7 @@ public class DBNav {
         }
     }
 
-    public void deleteSet(String table) throws SQLException {
+    public void navTable(String table, boolean up, boolean down) throws SQLException {
         try {
             Statement stmt = dbcon.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = stmt.executeQuery("SELECT * FROM " + table);
@@ -229,14 +231,13 @@ public class DBNav {
         }
     }
 
-    public void navTable(String table) throws SQLException {
+    public void deleteSet(String table,String primaryKey, String vertrags_nr) throws SQLException {
 
         try {
             dbcon = DriverManager.getConnection(db_url, username, password);
             stmt = dbcon.createStatement();
 
-            //ResultSet rs = stmt.executeQuery("select * from "+ table);
-            //DBTablePrinter.printResultSet(rs);
+            stmt.execute("DELETE FROM "+ table + " WHERE "+ primaryKey+ " = " + vertrags_nr);
 
 
         } catch (SQLException e) {
