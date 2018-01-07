@@ -235,8 +235,8 @@ public class DBNav {
             dbcon = DriverManager.getConnection(db_url, username, password);
             stmt = dbcon.createStatement();
 
-            ResultSet rs = stmt.executeQuery("select * from "+ table);
-            DBTablePrinter.printResultSet(rs);
+            //ResultSet rs = stmt.executeQuery("select * from "+ table);
+            //DBTablePrinter.printResultSet(rs);
 
 
         } catch (SQLException e) {
