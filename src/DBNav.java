@@ -1,6 +1,7 @@
 import org.postgresql.util.PSQLException;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * Created by Tobias on 06.01.18.
@@ -189,6 +190,41 @@ public class DBNav {
     public void navTable(String table, boolean up, boolean down) throws SQLException {
         try {
             Statement stmt = dbcon.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+            stmt = dbcon.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = stmt.executeQuery("SELECT * FROM " + table);
+            while (rs.next()) {
+                String coffeeName = rs.getString("COF_NAME");
+                int supplierID = rs.getInt("SUP_ID");
+                float price = rs.getFloat("PRICE");
+                int sales = rs.getInt("SALES");
+                int total = rs.getInt("TOTAL");
+                System.out.println(coffeeName + "\t" + supplierID +
+                        "\t" + price + "\t" + sales +
+                        "\t" + total);
+
+
+
+
+            boolean isLast = rs.isLast();
+            boolean isFirst = rs.isFirst();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (dbcon != null) {
+                dbcon.close();
+            }
+        }
+    }
+
+
+    /*public void navTable(String table, boolean up, boolean down) throws SQLException {
+        try {
+            Statement stmt = dbcon.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = stmt.executeQuery("SELECT * FROM " + table);
             stmt = dbcon.createStatement();
 
@@ -205,7 +241,7 @@ public class DBNav {
                 dbcon.close();
             }
         }
-    }
+    }*/
 
 
 
