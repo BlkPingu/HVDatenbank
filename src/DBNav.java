@@ -1,3 +1,5 @@
+import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
+
 import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
@@ -196,10 +198,55 @@ public class DBNav{
         }
     }
 
+    /*public int navTable(String table, boolean nPressed, boolean pPressed, int current) throws SQLException {
+        try {
+            dbcon = DriverManager.getConnection(db_url, username, password);
+            stmt = dbcon.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = stmt.executeQuery("SELECT * FROM " + table);
+
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int totalColumCount = rsmd.getColumnCount();
+
+
+            System.out.println("Current: "+current);
+            System.out.println("Lines:   "+totalColumCount);
+
+            for(int i=1; i<= totalColumCount;i++) {
+                System.out.println(rs.getInt("vertrags_nr") + "\t" + rs.getInt("vertragsdauer") + "\t" + rs.getString("erstellt_von"));
+            }
+
+            if (nPressed) {
+                System.out.println("<");
+                rs.next();
+                current++;
+            }
+            if (pPressed) {
+                System.out.println("<");
+
+                rs.previous();
+                current--;
+            }
+
+
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (dbcon != null) {
+                dbcon.close();
+            }
+        }
+        return current;
+    }*/
+
     public int navTable(String table, boolean nPressed, boolean pPressed, int current) throws SQLException {
         try {
             dbcon = DriverManager.getConnection(db_url, username, password);
-            stmt = dbcon.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            stmt = dbcon.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = stmt.executeQuery("SELECT * FROM " + table);
 
             rs.last();
@@ -208,32 +255,30 @@ public class DBNav{
             int first = rs.getRow();
 
 
-
-
             if (nPressed) {
                 for(int i=first; i<current; i++){
                     rs.next();
                 }
+
                 System.out.println(rs.getInt("vertrags_nr") + "\t" + rs.getInt("vertragsdauer") + "\t" + rs.getString("erstellt_von"));
                 current++;
                 if(last < current){
                     current = first;
                 }
 
-                return current;
             }
             if (pPressed) {
                 for(int i=first; i<current; i++){
                     rs.next();
                 }
+
                 System.out.println(rs.getInt("vertrags_nr") + "\t" + rs.getInt("vertragsdauer") + "\t" + rs.getString("erstellt_von"));
                 current--;
                 if(first > current){
                     current = last;
                 }
-                return current;
+
             }
-            return current;
 
 
         } catch (SQLException e) {
@@ -271,7 +316,7 @@ public class DBNav{
         }
     }
 
-    public void deleteSet(String table,String primaryKey, String vertrags_nr) throws SQLException {
+    public void deleteSet(String table,String primaryKey, int vertrags_nr) throws SQLException {
 
         try {
             ArrayList<Integer> vertragsnummern= new ArrayList<>();
@@ -285,9 +330,20 @@ public class DBNav{
                 vertragsnummern.add(vertrags_nummer);
             }
 
-            if (vertragsnummern.contains(vertrags_nr) == false){
+            //System.out.println("Vorhandene Vertragsnummern: " +vertragsnummern.toString());
+            //System.out.println("Vertragsnummer: " + vertrags_nr + " vorhanden? - "+ vertragsnummern.contains(vertrags_nr));
+
+
+
+            if(vertragsnummern.contains(vertrags_nr)){
+                stmt.execute("DELETE FROM "+ table + " WHERE "+ primaryKey+ " = " + "'"+vertrags_nr+"'");
+                System.out.println("Vertragsnummer geloescht.");
+                System.lineSeparator();
+            }
+
+            if (!vertragsnummern.contains(vertrags_nr)){
                 System.out.println("Vertragsnummer nicht vorhanden: "+ vertrags_nr);
-            }else stmt.execute("DELETE FROM "+ table + " WHERE "+ primaryKey+ " = " + vertrags_nr);
+            }
 
 
         } catch (SQLException e) {

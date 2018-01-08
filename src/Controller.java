@@ -42,18 +42,17 @@ public class Controller{
                 case 3:
                     //Loeschen Datensatz
                     System.out.print("VertragsNr: ");
-                    String key = scanner.next();
+                    int key = scanner.nextInt();
 
-                    dbNav.deleteSet(table,primaryKey,"'"+key+"'");
-                    System.out.print("Datensatz geloescht: ");
-
+                    dbNav.deleteSet(table,primaryKey,key);
                     break;
                 case 4:
                     //Navigieren
                     boolean exit = true;
+                    System.out.println("Press N(next) / P(previous) /Q(quit)");
+
                     while(exit) {
 
-                        System.out.println("Press N(next) / P(previous) /Q(quit)");
 
                         String np = scanner.next();
 
