@@ -16,6 +16,8 @@ public class Controller{
     public void run() throws SQLException{
         while(true){
             printInfo();
+            System.out.print("Geben Sie eine Zahl ein: ");
+
             int task = scanner.nextInt();
             switch (task) {
                 case 1:
@@ -25,23 +27,36 @@ public class Controller{
                     break;
                 case 2:
                     //Neuer Datensatz
+                    System.out.print("Vertragsnummer: ");
                     int vertrags_nr = scanner.nextInt();
+
+                    System.out.print("Vertragsdauer: ");
                     int vertragsdauer = scanner.nextInt();
+
+                    System.out.print("Erstellt von Firma: ");
                     String erstellt_von = scanner.next();
+
                     dbNav.createSet(table,vertrags_nr,vertragsdauer,erstellt_von);
                     break;
                 case 3:
                     //Loeschen Datensatz
+                    System.out.print("VertragsNr: ");
                     String key = scanner.next();
+
                     dbNav.deleteSet(table,primaryKey,"'"+key+"'");
+                    System.out.print("Datensatz geloescht: ");
+
                     break;
                 case 4:
                     //Navigieren
                     break;
                 case 5:
                     //Rollback
+                    System.out.print("Rollback initiiert... ");
                     dbNav.rollback();
-                    default:
+                    System.out.println("Rollback abgeschlossen. ");
+
+                default:
                     break;
             } //END switchcase
         } // END WHILE
