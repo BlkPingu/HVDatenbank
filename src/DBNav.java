@@ -1,12 +1,11 @@
-import org.postgresql.util.PSQLException;
-
+import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 
 /**
  * Created by Tobias on 06.01.18.
  */
-public class DBNav {
+public class DBNav{
 
 
     public String db_url = "jdbc:postgresql://db.f4.htw-berlin.de:5432/_s0549272__hausverwaltung";
@@ -170,12 +169,22 @@ public class DBNav {
 
     public void createSet(String table, int vertrags_nr, int vertragsdauer, String erstellt_von) throws SQLException {
         try {
+            ArrayList<Integer> vertragsnummern= new ArrayList<>();
             dbcon = DriverManager.getConnection(db_url, username, password);
+
             stmt = dbcon.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM " + table);
 
-            stmt.execute("INSERT INTO "+table+" VALUES ('"+ vertrags_nr+"','"+vertragsdauer+"','"+erstellt_von+"')");
+            while(rs.next()) {
+                int vertrags_nummer = rs.getInt("vertrags_nr");
+                vertragsnummern.add(vertrags_nummer);
+            }
 
-        } catch (SQLException e) {
+            if (vertragsnummern.contains(vertrags_nr)){
+                System.out.println("Vertragsnummer schon vorhanden: "+ vertrags_nr);
+            }else stmt.execute("INSERT INTO "+table+" VALUES ('"+ vertrags_nr+"','"+vertragsdauer+"','"+erstellt_von+"')");
+
+        } catch (SQLException e){
             e.printStackTrace();
         } finally {
             if (stmt != null) {
@@ -187,30 +196,46 @@ public class DBNav {
         }
     }
 
-    public void navTable(String table, boolean up, boolean down) throws SQLException {
+    public int navTable(String table, boolean nPressed, boolean pPressed, int current) throws SQLException {
         try {
-            Statement stmt = dbcon.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-
-
-            
-            stmt = dbcon.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            dbcon = DriverManager.getConnection(db_url, username, password);
+            stmt = dbcon.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = stmt.executeQuery("SELECT * FROM " + table);
-            while (rs.next()) {
-                String coffeeName = rs.getString("COF_NAME");
-                int supplierID = rs.getInt("SUP_ID");
-                float price = rs.getFloat("PRICE");
-                int sales = rs.getInt("SALES");
-                int total = rs.getInt("TOTAL");
-                System.out.println(coffeeName + "\t" + supplierID +
-                        "\t" + price + "\t" + sales +
-                        "\t" + total);
+
+            rs.last();
+            int last = rs.getRow();
+            rs.first();
+            int first = rs.getRow();
 
 
 
 
-            boolean isLast = rs.isLast();
-            boolean isFirst = rs.isFirst();
+            if (nPressed) {
+                for(int i=first; i<current; i++){
+                    rs.next();
+                }
+                System.out.println(rs.getInt("vertrags_nr") + "\t" + rs.getInt("vertragsdauer") + "\t" + rs.getString("erstellt_von"));
+                current++;
+                if(last < current){
+                    current = first;
+                }
+
+                return current;
             }
+            if (pPressed) {
+                for(int i=first; i<current; i++){
+                    rs.next();
+                }
+                System.out.println(rs.getInt("vertrags_nr") + "\t" + rs.getInt("vertragsdauer") + "\t" + rs.getString("erstellt_von"));
+                current--;
+                if(first > current){
+                    current = last;
+                }
+                return current;
+            }
+            return current;
+
+
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -221,31 +246,8 @@ public class DBNav {
                 dbcon.close();
             }
         }
+        return current;
     }
-
-
-    /*public void navTable(String table, boolean up, boolean down) throws SQLException {
-        try {
-            Statement stmt = dbcon.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            ResultSet rs = stmt.executeQuery("SELECT * FROM " + table);
-            stmt = dbcon.createStatement();
-
-            boolean isLast = rs.isLast();
-            boolean isFirst = rs.isFirst();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (stmt != null) {
-                stmt.close();
-            }
-            if (dbcon != null) {
-                dbcon.close();
-            }
-        }
-    }*/
-
-
 
     public void printTable(String table) throws SQLException {
 
@@ -272,10 +274,20 @@ public class DBNav {
     public void deleteSet(String table,String primaryKey, String vertrags_nr) throws SQLException {
 
         try {
+            ArrayList<Integer> vertragsnummern= new ArrayList<>();
             dbcon = DriverManager.getConnection(db_url, username, password);
-            stmt = dbcon.createStatement();
 
-            stmt.execute("DELETE FROM "+ table + " WHERE "+ primaryKey+ " = " + vertrags_nr);
+            stmt = dbcon.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM " + table);
+
+            while(rs.next()) {
+                int vertrags_nummer = rs.getInt("vertrags_nr");
+                vertragsnummern.add(vertrags_nummer);
+            }
+
+            if (vertragsnummern.contains(vertrags_nr) == false){
+                System.out.println("Vertragsnummer nicht vorhanden: "+ vertrags_nr);
+            }else stmt.execute("DELETE FROM "+ table + " WHERE "+ primaryKey+ " = " + vertrags_nr);
 
 
         } catch (SQLException e) {

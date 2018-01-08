@@ -10,6 +10,7 @@ public class Controller{
     private DBNav dbNav =  new DBNav();
     String table = "mietvertrag";
     String primaryKey = "vertrags_nr";
+    int current = 1;
 
 
 
@@ -49,6 +50,24 @@ public class Controller{
                     break;
                 case 4:
                     //Navigieren
+                    boolean exit = true;
+                    while(exit) {
+
+                        System.out.println("Press N(next) / P(previous) /Q(quit)");
+
+                        String np = scanner.next();
+
+                        if (np.equals("n") || np.equals("N")) {
+                            current = dbNav.navTable(table, true, false, current);
+                        }
+                        if (np.equals("p") || np.equals("P")) {
+                            current = dbNav.navTable(table, false, true, current);
+
+                        }
+                        if (np.equals("q") || np.equals("Q")) {
+                            exit = false;
+                        }
+                    }
                     break;
                 case 5:
                     //Rollback
