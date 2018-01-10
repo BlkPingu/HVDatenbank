@@ -214,8 +214,8 @@ public class DBNav{
 
 
 
-/*
-    public void createSet(String table, int vertrags_nr, int vertragsdauer, String erstellt_von) throws SQLException {
+
+    public void createSet2(String table, int vertrags_nr, int vertragsdauer, String erstellt_von) throws SQLException {
         try {
             ArrayList<Integer> vertragsnummern= new ArrayList<>();
             dbcon = DriverManager.getConnection(db_url, username, password);
@@ -244,9 +244,7 @@ public class DBNav{
         }
     }
 
-    */
-
-    /*public int navTable(String table, boolean nPressed, boolean pPressed, int current) throws SQLException {
+    public int navTable1(String table, boolean nPressed, boolean pPressed, int current) throws SQLException {
         try {
             dbcon = DriverManager.getConnection(db_url, username, password);
             stmt = dbcon.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
@@ -289,9 +287,9 @@ public class DBNav{
             }
         }
         return current;
-    }*/
+    }
 
-    public int navTable(String table, boolean nPressed, boolean pPressed, int current) throws SQLException {
+    public int navTable2(String table, boolean nPressed, boolean pPressed, int current) throws SQLException {
         try {
             dbcon = DriverManager.getConnection(db_url, username, password);
             stmt = dbcon.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
