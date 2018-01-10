@@ -1,4 +1,6 @@
 
+import com.sun.org.apache.bcel.internal.generic.Select;
+
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -169,6 +171,52 @@ public class DBNav{
 
     public void createSet(String table, int vertrags_nr, int vertragsdauer, String erstellt_von) throws SQLException {
         try {
+            dbcon = DriverManager.getConnection(db_url, username, password);
+            stmt = dbcon.createStatement();
+
+
+            ArrayList<Integer> vertragsnummern= new ArrayList<>();
+            ArrayList<String> firmen = new ArrayList<>();
+
+            ResultSet rs = stmt.executeQuery("SELECT * FROM " + table);
+                while (rs.next()) {
+                    vertragsnummern.add(rs.getInt("vertrags_nr"));
+                }
+
+
+            ResultSet rs2 = stmt.executeQuery("SELECT * FROM hausverwaltungsfirma");
+                while(rs2.next()){
+                    firmen.add(rs2.getString("name"));
+                }
+
+
+                if (!firmen.contains(erstellt_von)||vertragsnummern.contains(vertrags_nr)) {
+                    if (!firmen.contains(erstellt_von)) {
+                        System.out.println("Firma nicht vorhanden: " + erstellt_von);
+                    }
+                    if (vertragsnummern.contains(vertrags_nr)) {
+                        System.out.println("Vertragsnummer schon vorhanden: " + vertrags_nr);
+                    }
+                }else stmt.execute("INSERT INTO " + table + " VALUES ('" + vertrags_nr + "','" + vertragsdauer + "','" + erstellt_von + "')");
+
+        } catch (SQLException e){
+            e.printStackTrace();
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (dbcon != null) {
+                dbcon.close();
+            }
+        }
+    }
+
+
+
+
+/*
+    public void createSet(String table, int vertrags_nr, int vertragsdauer, String erstellt_von) throws SQLException {
+        try {
             ArrayList<Integer> vertragsnummern= new ArrayList<>();
             dbcon = DriverManager.getConnection(db_url, username, password);
 
@@ -195,6 +243,8 @@ public class DBNav{
             }
         }
     }
+
+    */
 
     /*public int navTable(String table, boolean nPressed, boolean pPressed, int current) throws SQLException {
         try {
